@@ -220,6 +220,21 @@ class CompositeZeroYieldStructure : public YieldTermStructure {
 };
 
 %template(CompositeZeroYieldStructure) CompositeZeroYieldStructure<BinaryFunction>;
+
+
+%{
+using QuantLib::SpreadYTS;
+%}
+
+%shared_ptr(SpreadYTS);
+class SpreadYTS : public YieldTermStructure {
+public :
+	SpreadYTS( const Handle<YieldTermStructure>& baseCurve,
+		       const Handle<YieldTermStructure>& sprdCurve,
+			   const Real alpha = 1.0 );
+};
+
+
 #endif
 
 
