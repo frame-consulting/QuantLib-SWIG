@@ -112,6 +112,7 @@ GNU autoconf configure script.
 QL_DEPRECATED_DISABLE_WARNING
 %}
 
+%include basismodels.i
 %include common.i
 %include vectors.i
 %include tuple.i
@@ -148,6 +149,7 @@ QL_DEPRECATED_DISABLE_WARNING
 %include futures.i
 %include gaussian1dmodel.i
 %include grid.i
+%include hybridmodels.i
 %include indexes.i
 %include inflation.i
 %include instruments.i
@@ -162,6 +164,7 @@ QL_DEPRECATED_DISABLE_WARNING
 %include marketelements.i
 %include money.i
 %include montecarlo.i
+%include multiassetmodels.i
 %include null.i
 %include observer.i
 %include ode.i
@@ -171,6 +174,7 @@ QL_DEPRECATED_DISABLE_WARNING
 %include options.i
 %include payoffs.i
 %include piecewiseyieldcurve.i
+%include quasigaussian.i
 %include randomnumbers.i
 %include ratehelpers.i
 %include rounding.i
@@ -185,11 +189,13 @@ QL_DEPRECATED_DISABLE_WARNING
 %include swap.i
 %include swaption.i
 %include swingoption.i
+%include templatemontecarlo.i
 %include termstructures.i
 %include timebasket.i
 %include timeseries.i
 %include tracing.i
 %include types.i
+%include vanillalocalvolmodel.i
 %include volatilities.i
 %include volatilitymodels.i
 %include zerocurve.i

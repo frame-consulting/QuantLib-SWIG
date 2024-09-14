@@ -811,6 +811,57 @@ export_smileinterpolation_curve(MonotonicCubicInterpolatedSmileSection, Monotoni
 export_smileinterpolation_curve(SplineCubicInterpolatedSmileSection, SplineCubic);
 
 %{
+using QuantLib::SabrInterpolatedSmileSection;
+%}
+
+%shared_ptr(SabrInterpolatedSmileSection)
+class SabrInterpolatedSmileSection : public SmileSection {
+  public:
+        SabrInterpolatedSmileSection(
+               const Date &optionDate, const Handle<Quote> &forward,
+               const std::vector<Rate> &strikes, bool hasFloatingStrikes,
+               const Handle<Quote> &atmVolatility,
+               const std::vector<Handle<Quote> > &volHandles, Real alpha, Real beta,
+               Real nu, Real rho, bool isAlphaFixed = false,
+               bool isBetaFixed = false, bool isNuFixed = false,
+               bool isRhoFixed = false,
+               bool vegaWeighted = true,
+               const ext::shared_ptr<EndCriteria> &endCriteria =
+               ext::shared_ptr<EndCriteria>(),
+               const ext::shared_ptr<OptimizationMethod> &method =
+               ext::shared_ptr<OptimizationMethod>(),
+               const DayCounter &dc = Actual365Fixed(),
+               const Real shift = 0.0,
+               const bool useNormalVols = false );
+
+        SabrInterpolatedSmileSection(
+               const Date &optionDate, const Rate &forward,
+               const std::vector<Rate> &strikes, bool hasFloatingStrikes,
+               const Volatility &atmVolatility, const std::vector<Volatility> &vols,
+               Real alpha, Real beta, Real nu, Real rho,
+               bool isAlphaFixed = false, bool isBetaFixed = false,
+               bool isNuFixed = false, bool isRhoFixed = false,
+               bool vegaWeighted = true,
+               const ext::shared_ptr<EndCriteria> &endCriteria =
+               ext::shared_ptr<EndCriteria>(),
+               const ext::shared_ptr<OptimizationMethod> &method =
+               ext::shared_ptr<OptimizationMethod>(),
+               const DayCounter &dc = Actual365Fixed(),
+               const Real shift = 0.0,
+               const bool useNormalVols = false );
+
+        Real alpha();
+        Real beta();
+        Real nu();
+        Real rho();
+        Real rmsError();
+        Real maxError();
+        EndCriteria::Type endCriteria();
+
+};
+
+
+%{
 using QuantLib::KahaleSmileSection;
 %}
 
@@ -1165,5 +1216,46 @@ class CmsMarketCalibration {
     Real error();
     EndCriteria::Type endCriteria();
 };
+
+
+// BlackVariance term structure based on interpolated smile sections
+
+
+%{
+using QuantLib::SmiledSurface;
+%}
+
+%shared_ptr(SmiledSurface)
+class SmiledSurface : public BlackVolTermStructure {
+  public:
+        SmiledSurface(
+            const std::vector<ext::shared_ptr<SmileSection>>  smiles,
+            BusinessDayConvention    bdc = Following,
+            const DayCounter&        dc = DayCounter());
+        SmiledSurface(
+            const std::vector<ext::shared_ptr<SmileSection>>  smiles,
+            const Date&              referenceDate,
+            const Calendar&          cal,
+            BusinessDayConvention    bdc = Following,
+            const DayCounter&        dc = DayCounter());
+        SmiledSurface(
+            const std::vector<ext::shared_ptr<SmileSection>>  smiles,
+            Natural                  settlementDays,
+            const Calendar&          cal,
+            BusinessDayConvention    bdc = Following,
+            const DayCounter&        dc = DayCounter());
+};
+
+
+// We add a wrapper function here because we don't want to change the order of classes in this file
+%inline %{
+    ext::shared_ptr<SmileSection> SmileSectionFromSwaptionVTS(
+            const ext::shared_ptr<SwaptionVolatilityStructure>     volTS,
+            const Time                                             optionTime,
+            const Time                                             swapLength) {
+        return volTS->smileSection(optionTime, swapLength);
+    }
+%}
+
 
 #endif

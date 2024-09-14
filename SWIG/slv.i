@@ -39,6 +39,11 @@ class HestonSLVProcess : public StochasticProcess {
                      const Real mixingFactor = 1.0);
 };
 
+// We need vector of processes as input
+namespace std {
+    %template(HestonSLVProcessVector) vector<ext::shared_ptr<HestonSLVProcess> >;
+}
+
 
 %{
 using QuantLib::HestonSLVMCModel;
