@@ -108,6 +108,13 @@ class GeneralizedBlackScholesProcess : public StochasticProcess1D {
       Handle<LocalVolTermStructure> localVolatility();
 };
 
+#if defined(SWIGCSHARP)
+SWIG_STD_VECTOR_ENHANCED( ext::shared_ptr<GeneralizedBlackScholesProcess> )
+#endif
+%template(GeneralizedBlackScholesProcessVector)
+std::vector<ext::shared_ptr<GeneralizedBlackScholesProcess> >;
+
+
 %{
 using QuantLib::BlackScholesProcess;
 %}

@@ -42,6 +42,7 @@ namespace std {
 
     %template(IntVector) vector<int>;
     %template(UnsignedIntVector) vector<unsigned int>;
+    %template(SizeVector) vector<size_t>;
     %template(DoubleVector) vector<double>;
     %template(StrVector) vector<std::string>;
     %template(BoolVector) vector<bool>;
