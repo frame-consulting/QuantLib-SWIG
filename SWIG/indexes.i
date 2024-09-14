@@ -145,6 +145,14 @@ class IborIndex : public InterestRateIndex {
     }
 %}
 
+#if defined(SWIGCSHARP)
+SWIG_STD_VECTOR_ENHANCED( ext::shared_ptr<IborIndex> )
+#endif
+namespace std {
+    %template(IborIndexVector) vector<ext::shared_ptr<IborIndex> >;
+}
+
+
 %shared_ptr(OvernightIndex)
 
 class OvernightIndex : public IborIndex {
@@ -286,6 +294,7 @@ class SwapIndex : public InterestRateIndex {
     ext::shared_ptr<SwapIndex> clone(const Handle<YieldTermStructure>& forwarding,
                                        const Handle<YieldTermStructure>& discounting) const;
     ext::shared_ptr<SwapIndex> clone(const Period& tenor) const;
+    ext::shared_ptr<VanillaSwap> underlyingSwap(const Date& fixingDate);
 };
 
 #if defined(SWIGCSHARP)
@@ -295,6 +304,7 @@ namespace std {
     %template(SwapIndexVector)
         vector<ext::shared_ptr<SwapIndex> >;
 }
+
 
 %define export_swap_instance(Name)
 %{
