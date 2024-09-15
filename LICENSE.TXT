@@ -29,6 +29,7 @@ QuantLib-SWIG is
     Copyright (C) 2017 BN Algorithms Ltd
     Copyright (C) 2017, 2018, 2019, 2020 Matthias Lungwitz
     Copyright (C) 2018 Angus Lee
+    Copyright (C) 2018, 2019 Sebastian Schlenkrich
     Copyright (C) 2019 Pedro Coelho
     Copyright (C) 2019 Prasad Somwanshi
     Copyright (C) 2020 Gorazd Brumen
