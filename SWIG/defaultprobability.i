@@ -63,6 +63,14 @@ Handle<DefaultProbabilityTermStructure>;
 %template(RelinkableDefaultProbabilityTermStructureHandle)
 RelinkableHandle<DefaultProbabilityTermStructure>;
 
+#if defined(SWIGCSHARP)
+SWIG_STD_VECTOR_ENHANCED( Handle<DefaultProbabilityTermStructure> )
+#endif
+namespace std {
+    %template(DefaultProbabilityTermStructureHandleVector)  vector<Handle<DefaultProbabilityTermStructure> >;
+    %template(DefaultProbabilityTermStructureRelinkableHandleVector)  vector<RelinkableHandle<DefaultProbabilityTermStructure> >;
+}
+
 
 // concrete curves
 
@@ -175,9 +183,11 @@ class AdjustedSurvivalProbabilityStructure : public DefaultProbabilityTermStruct
 
 
 %{
+using QuantLib::CreditDefaultSwap;
 using QuantLib::DefaultProbabilityHelper;
 using QuantLib::SpreadCdsHelper;
 using QuantLib::UpfrontCdsHelper;
+using QuantLib::SpreadCdsIndexHelper;
 %}
 
 // rate helpers for curve bootstrapping
@@ -264,6 +274,8 @@ class SpreadCdsHelper : public DefaultProbabilityHelper {
             bool rebatesAccrual = true,
             CreditDefaultSwap::PricingModel model = CreditDefaultSwap::Midpoint);
     #endif
+    ext::shared_ptr<CreditDefaultSwap> swap() const;
+    Real impliedQuote() const;
 };
 
 
@@ -331,6 +343,88 @@ class UpfrontCdsHelper : public DefaultProbabilityHelper {
             bool rebatesAccrual = true,
             CreditDefaultSwap::PricingModel model = CreditDefaultSwap::Midpoint);
     #endif
+    ext::shared_ptr<CreditDefaultSwap> swap() const;
+    Real impliedQuote() const;
+};
+
+
+%shared_ptr(SpreadCdsIndexHelper)
+class SpreadCdsIndexHelper : public DefaultProbabilityHelper {
+  public:
+    #if defined(SWIGPYTHON)
+    %feature("kwargs") SpreadCdsIndexHelper;
+    SpreadCdsIndexHelper(
+            const Handle<Quote>& fairIndexSpread,
+            Rate runningSpread,
+            const Period& tenor,
+            Integer settlementDays,
+            const Calendar& calendar,
+            Frequency frequency,
+            BusinessDayConvention paymentConvention,
+            DateGeneration::Rule rule,
+            const DayCounter& dayCounter,
+            const Handle<YieldTermStructure>& discountCurve,
+            const std::vector<Handle<DefaultProbabilityTermStructure>>& baseTermStructures,
+            const std::vector<Real>& recoveryRates,
+            const std::vector<Real>& weights,
+            bool settlesAccrual = true,
+            bool paysAtDefaultTime = true,
+            const Date& startDate = Date(),
+            const DayCounter& lastPeriodDayCounter = DayCounter(),
+            bool rebatesAccrual = true,
+            CreditDefaultSwap::PricingModel model = CreditDefaultSwap::Midpoint);
+    #else
+    SpreadCdsIndexHelper(
+            const Handle<Quote>& fairIndexSpread,
+            Rate runningSpread,
+            const Period& tenor,
+            Integer settlementDays,
+            const Calendar& calendar,
+            Frequency frequency,
+            BusinessDayConvention paymentConvention,
+            DateGeneration::Rule rule,
+            const DayCounter& dayCounter,
+            const Handle<YieldTermStructure>& discountCurve,
+            const std::vector<Handle<DefaultProbabilityTermStructure>>& baseTermStructures,
+            const std::vector<Real>& recoveryRates,
+            const std::vector<Real>& weights,
+            bool settlesAccrual = true,
+            bool paysAtDefaultTime = true,
+            const Date& startDate = Date(),
+            const DayCounter& lastPeriodDayCounter = DayCounter(),
+            bool rebatesAccrual = true,
+            CreditDefaultSwap::PricingModel model = CreditDefaultSwap::Midpoint);
+    SpreadCdsIndexHelper(
+            Rate fairIndexSpread,
+            Rate runningSpread,
+            const Period& tenor,
+            Integer settlementDays,
+            const Calendar& calendar,
+            Frequency frequency,
+            BusinessDayConvention paymentConvention,
+            DateGeneration::Rule rule,
+            const DayCounter& dayCounter,
+            const Handle<YieldTermStructure>& discountCurve,
+            const std::vector<Handle<DefaultProbabilityTermStructure>>& baseTermStructures,
+            const std::vector<Real>& recoveryRates,
+            const std::vector<Real>& weights,
+            bool settlesAccrual = true,
+            bool paysAtDefaultTime = true,
+            const Date& startDate = Date(),
+            const DayCounter& lastPeriodDayCounter = DayCounter(),
+            bool rebatesAccrual = true,
+            CreditDefaultSwap::PricingModel model = CreditDefaultSwap::Midpoint);
+    #endif
+    ext::shared_ptr<CreditDefaultSwap> swap() const;
+    Real impliedQuote() const;
+
+    Real couponLegNPV() const;
+    Real defaultLegNPV() const;
+    Real accrualRebateNPV() const;
+    Real riskyAnnuity() const;
+    std::vector<RelinkableHandle<DefaultProbabilityTermStructure> > adjustedTermStructures() const;
+    std::vector<ext::shared_ptr<CreditDefaultSwap> > swaps() const;
+
 };
 
 
@@ -340,10 +434,12 @@ class UpfrontCdsHelper : public DefaultProbabilityHelper {
 %{
 using QuantLib::HazardRate;
 using QuantLib::DefaultDensity;
+using QuantLib::HazardRateAdjuster;  // use with SpreadCdsIndexHelper
 %}
 
 struct HazardRate {};
 struct DefaultDensity {};
+struct HazardRateAdjuster {};
 
 // curve
 
@@ -406,6 +502,7 @@ class Name : public DefaultProbabilityTermStructure {
 
 // add other instantiations if you need them
 export_piecewise_default_curve(PiecewiseFlatHazardRate,HazardRate,BackwardFlat);
+export_piecewise_default_curve(PiecewiseFlatHazardRateAdjuster,HazardRateAdjuster,BackwardFlat);
 
 
 // bond engine based on default probability
