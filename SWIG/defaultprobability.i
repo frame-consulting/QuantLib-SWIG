@@ -162,6 +162,19 @@ class InterpolatedSurvivalProbabilityCurve : public DefaultProbabilityTermStruct
 
 
 %{
+using QuantLib::AdjustedSurvivalProbabilityStructure;
+%}
+
+%shared_ptr(AdjustedSurvivalProbabilityStructure);
+class AdjustedSurvivalProbabilityStructure : public DefaultProbabilityTermStructure {
+  public:
+    AdjustedSurvivalProbabilityStructure(
+        const Handle<DefaultProbabilityTermStructure>& defaultProbabilityTermStructureBase,
+        const Handle<DefaultProbabilityTermStructure>& adjusterTermStructure);
+};
+
+
+%{
 using QuantLib::DefaultProbabilityHelper;
 using QuantLib::SpreadCdsHelper;
 using QuantLib::UpfrontCdsHelper;
