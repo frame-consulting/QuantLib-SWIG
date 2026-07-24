@@ -31,6 +31,7 @@
 
 %define QL_TYPECHECK_BOOL       7210    %enddef
 %define QL_TYPECHECK_INTEGER       7220    %enddef
+%define QL_TYPECHECK_REAL       7230    %enddef
 
 %{
 // This is necessary to avoid compile failures on 
@@ -74,6 +75,22 @@
 %}
 %typemap(out) ext::optional<Integer> %{
     $result = !$1 ? Py_None : PyLong_FromLong(*$1);
+    Py_INCREF($result);
+%}
+
+%typemap(in) ext::optional<Real> %{
+    if ($input == Py_None)
+        $1 = ext::nullopt;
+    else if (PyFloat_Check($input))
+        $1 = PyFloat_AsDouble($input);
+    else
+        SWIG_exception(SWIG_TypeError, "float expected");
+%}
+%typecheck (QL_TYPECHECK_REAL) ext::optional<Real> %{
+    $1 = (PyFloat_Check($input) || $input == Py_None) ? 1 : 0;
+%}
+%typemap(out) ext::optional<Real> %{
+    $result = !$1 ? Py_None : PyFloat_FromDouble(*$1);
     Py_INCREF($result);
 %}
 #else
