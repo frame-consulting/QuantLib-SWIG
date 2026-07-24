@@ -189,6 +189,7 @@ QL_DEPRECATED_DISABLE_WARNING
 %include swap.i
 %include swaption.i
 %include swingoption.i
+%include syntheticcdo.i
 %include templatemontecarlo.i
 %include termstructures.i
 %include timebasket.i
