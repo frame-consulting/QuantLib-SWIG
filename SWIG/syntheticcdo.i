@@ -196,21 +196,69 @@ ext::shared_ptr<DefaultLossModel> GaussianLHPBaseCorrelationLossModel(
 %{
 ext::shared_ptr<DefaultLossModel> GaussianCopulaInhomogeneousPoolBaseCorrelationLossModel(
     const Handle<BaseCorrelationTermStructure<QuantLib::BilinearInterpolation> >& correlationStructure,
-    const std::vector<Real>& recoveries
+    const std::vector<Real>& recoveries,
+    Size nBuckets = 200,
+    Real max = 5.0,
+    Real min = -5.0,
+    Real nSteps = 50
 ){
     QuantLib::IHGaussPoolLossModel::copulaType::initTraits traits;
     return ext::shared_ptr<DefaultLossModel>(
         new QuantLib::BaseCorrelationLossModel<QuantLib::IHGaussPoolLossModel, QuantLib::BilinearInterpolation >(
             correlationStructure,
             recoveries,
-            traits
+            traits,
+            nBuckets,
+            max,
+            min,
+            nSteps
         )
     );
 }
 %}
 ext::shared_ptr<DefaultLossModel> GaussianCopulaInhomogeneousPoolBaseCorrelationLossModel(
     const Handle<BaseCorrelationTermStructure<QuantLib::BilinearInterpolation> >& correlationStructure,
-    const std::vector<Real>& recoveries
+    const std::vector<Real>& recoveries,
+    Size nBuckets = 200,
+    Real max = 5.0,
+    Real min = -5.0,
+    Real nSteps = 50
+);
+
+
+%{
+ext::shared_ptr<DefaultLossModel> GaussianHullWhiteBucketingBaseCorrelationLossModel(
+    const Handle<BaseCorrelationTermStructure<QuantLib::BilinearInterpolation> >& correlationStructure,
+    const std::vector<Real>& recoveries,
+    Real recoveryScaling = 1.0,
+    Size nBuckets = 200,
+    Real max = 5.0,
+    Real min = -5.0,
+    Real nSteps = 50
+){
+    QuantLib::GaussianHullWhiteBucketingDefaultLossModel::copulaType::initTraits traits;
+    return ext::shared_ptr<DefaultLossModel>(
+        new QuantLib::BaseCorrelationLossModel<QuantLib::GaussianHullWhiteBucketingDefaultLossModel, QuantLib::BilinearInterpolation >(
+            correlationStructure,
+            recoveries,
+            traits,
+            recoveryScaling,
+            nBuckets,
+            max,
+            min,
+            nSteps
+        )
+    );
+}
+%}
+ext::shared_ptr<DefaultLossModel> GaussianHullWhiteBucketingBaseCorrelationLossModel(
+    const Handle<BaseCorrelationTermStructure<QuantLib::BilinearInterpolation> >& correlationStructure,
+    const std::vector<Real>& recoveries,
+    Real recoveryScaling = 1.0,
+    Size nBuckets = 200,
+    Real max = 5.0,
+    Real min = -5.0,
+    Real nSteps = 50
 );
 
 
