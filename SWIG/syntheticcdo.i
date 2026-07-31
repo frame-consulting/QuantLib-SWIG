@@ -103,6 +103,55 @@ ext::shared_ptr<DefaultLossModel> GaussianCopulaInhomogeneousPoolLossModel(
 );
 
 
+%{
+ext::shared_ptr<DefaultLossModel> GaussianHullWhiteBucketingDefaultLossModel(
+    const Handle<Quote>& correlation,
+    const std::vector<Real>& recoveries,
+    Real recoveryScaling,
+    Size nBuckets,
+    Real max,
+    Real min,
+    Real nSteps,
+    bool useDetachmentUpperBound = false,
+    bool enforceDistributionProperty = false
+){
+    ext::shared_ptr<QuantLib::GaussianConstantLossLM> latentModel(new QuantLib::GaussianConstantLossLM(
+        correlation,
+        recoveries,
+        QuantLib::LatentModelIntegrationType::GaussianQuadrature,
+        recoveries.size(),
+        QuantLib::GaussianCopulaPolicy::initTraits()));
+    QuantLib::GaussianHullWhiteBucketingDefaultLossModel::UpperBoundStrategy upperBoundStrategy = QuantLib::GaussianHullWhiteBucketingDefaultLossModel::One;
+    if (useDetachmentUpperBound) {
+        upperBoundStrategy = QuantLib::GaussianHullWhiteBucketingDefaultLossModel::Detachment;
+    }
+    return ext::shared_ptr<DefaultLossModel>(
+        new QuantLib::GaussianHullWhiteBucketingDefaultLossModel(
+            latentModel,
+            recoveryScaling,  // 0.0 - 1.0
+            nBuckets,  //  100 - 200
+            max,       //  3.0 - 5.0
+            min,       // -5.0 - -3.0
+            nSteps,   //  15 - 50
+            upperBoundStrategy,
+            enforceDistributionProperty
+        )
+    );
+}
+%}
+ext::shared_ptr<DefaultLossModel> GaussianHullWhiteBucketingDefaultLossModel(
+    const Handle<Quote>& correlation,
+    const std::vector<Real>& recoveries,
+    Real recoveryScaling,
+    Size nBuckets,
+    Real max,
+    Real min,
+    Real nSteps,
+    bool useDetachmentUpperBound = false,
+    bool enforceDistributionProperty = false
+);
+
+
 %shared_ptr(BaseCorrelationTermStructure<QuantLib::BilinearInterpolation>);
 
 template<class Interpolator2D_T>
