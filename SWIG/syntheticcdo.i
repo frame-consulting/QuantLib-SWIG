@@ -20,6 +20,7 @@
 %{
 using QuantLib::BaseCorrelationTermStructure;
 using QuantLib::Basket;
+using QuantLib::ChoeKwonDefaultLossModel;
 using QuantLib::DefaultLossModel;
 using QuantLib::GaussianLHPLossModel;
 using QuantLib::IntegralCDOEngine;
@@ -65,6 +66,22 @@ class GaussianLHPLossModel : public DefaultLossModel {
             const Handle<Quote>& correlation,
             const std::vector<Real>& recoveries);
 };
+
+
+%shared_ptr(ChoeKwonDefaultLossModel);
+class ChoeKwonDefaultLossModel : public DefaultLossModel {
+  public:
+    ChoeKwonDefaultLossModel(
+        const Handle<Quote>& correlation,
+        const std::vector<Real>& recoveries,
+        Real p,
+        Real q,
+        Real mu,
+        Real b,
+        Real defaultThreshold = 1.0-1.0e-8
+    );
+};
+
 
 
 %{
@@ -150,6 +167,7 @@ ext::shared_ptr<DefaultLossModel> GaussianHullWhiteBucketingDefaultLossModel(
     bool useDetachmentUpperBound = false,
     bool enforceDistributionProperty = false
 );
+
 
 
 %shared_ptr(BaseCorrelationTermStructure<QuantLib::BilinearInterpolation>);
