@@ -226,6 +226,7 @@ ext::shared_ptr<DefaultLossModel> GaussianCopulaInhomogeneousPoolBaseCorrelation
             correlationStructure,
             recoveries,
             traits,
+            1.0,  // recovery scaling
             nBuckets,
             max,
             min,
@@ -277,6 +278,39 @@ ext::shared_ptr<DefaultLossModel> GaussianHullWhiteBucketingBaseCorrelationLossM
     Real max = 5.0,
     Real min = -5.0,
     Real nSteps = 50
+);
+
+
+%{
+ext::shared_ptr<DefaultLossModel> ChoeKwonBaseCorrelationLossModel(
+    const Handle<BaseCorrelationTermStructure<QuantLib::BilinearInterpolation> >& correlationStructure,
+    const std::vector<Real>& recoveries,
+    const Real p,
+    const Real q,
+    const Real mu,
+    const Real b
+){
+    QuantLib::ChoeKwonDefaultLossModel::copulaType::initTraits traits;
+    return ext::shared_ptr<DefaultLossModel>(
+        new QuantLib::BaseCorrelationLossModel<QuantLib::ChoeKwonDefaultLossModel, QuantLib::BilinearInterpolation >(
+            correlationStructure,
+            recoveries,
+            traits,
+            p,
+            q,
+            mu,
+            b
+        )
+    );
+}
+%}
+ext::shared_ptr<DefaultLossModel> ChoeKwonBaseCorrelationLossModel(
+    const Handle<BaseCorrelationTermStructure<QuantLib::BilinearInterpolation> >& correlationStructure,
+    const std::vector<Real>& recoveries,
+    const Real p,
+    const Real q,
+    const Real mu,
+    const Real b
 );
 
 
