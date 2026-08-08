@@ -22,11 +22,13 @@ using QuantLib::BaseCorrelationTermStructure;
 using QuantLib::Basket;
 using QuantLib::ChoeKwonDefaultLossModel;
 using QuantLib::DefaultLossModel;
+using QuantLib::DefaultProbabilityTermStructure;
 using QuantLib::GaussianLHPLossModel;
 using QuantLib::IntegralCDOEngine;
 using QuantLib::Pool;
 using QuantLib::MidPointCDOEngine;
 using QuantLib::SyntheticCDO;
+using QuantLib::TrancheSurvivalProbabilityTermStructure;
 %}
 
 %shared_ptr(Pool);
@@ -374,5 +376,18 @@ class IntegralCDOEngine : public PricingEngine {
   public:
     IntegralCDOEngine(Handle<YieldTermStructure> discountCurve);
 };
+
+
+%shared_ptr(TrancheSurvivalProbabilityTermStructure);
+class TrancheSurvivalProbabilityTermStructure : public DefaultProbabilityTermStructure {
+  public:
+    TrancheSurvivalProbabilityTermStructure(
+        const Date& referenceDate,
+        const Calendar& cal,
+        const DayCounter& dc,
+        const ext::shared_ptr<Basket>& basket);
+};
+
+
 
 #endif
