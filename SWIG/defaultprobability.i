@@ -188,6 +188,7 @@ using QuantLib::DefaultProbabilityHelper;
 using QuantLib::SpreadCdsHelper;
 using QuantLib::UpfrontCdsHelper;
 using QuantLib::SpreadCdsIndexHelper;
+using QuantLib::UpfrontCdsIndexHelper;
 %}
 
 // rate helpers for curve bootstrapping
@@ -424,9 +425,89 @@ class SpreadCdsIndexHelper : public DefaultProbabilityHelper {
     Real riskyAnnuity() const;
     std::vector<RelinkableHandle<DefaultProbabilityTermStructure> > adjustedTermStructures() const;
     std::vector<ext::shared_ptr<CreditDefaultSwap> > swaps() const;
-
 };
 
+
+%shared_ptr(UpfrontCdsIndexHelper)
+class UpfrontCdsIndexHelper : public DefaultProbabilityHelper {
+  public:
+    #if defined(SWIGPYTHON)
+    %feature("kwargs") UpfrontCdsIndexHelper;
+    UpfrontCdsIndexHelper(
+            const Handle<Quote>& fairUpfront,
+            Rate runningSpread,
+            const Period& tenor,
+            Integer settlementDays,
+            const Calendar& calendar,
+            Frequency frequency,
+            BusinessDayConvention paymentConvention,
+            DateGeneration::Rule rule,
+            const DayCounter& dayCounter,
+            const Handle<YieldTermStructure>& discountCurve,
+            const std::vector<Handle<DefaultProbabilityTermStructure>>& baseTermStructures,
+            const std::vector<Real>& recoveryRates,
+            const std::vector<Real>& weights,
+            Natural upfrontSettlementDays = 3,
+            bool settlesAccrual = true,
+            bool paysAtDefaultTime = true,
+            const Date& startDate = Date(),
+            const DayCounter& lastPeriodDayCounter = DayCounter(),
+            bool rebatesAccrual = true,
+            CreditDefaultSwap::PricingModel model = CreditDefaultSwap::Midpoint);
+    #else
+    UpfrontCdsIndexHelper(
+            const Handle<Quote>& fairUpfront,
+            Rate runningSpread,
+            const Period& tenor,
+            Integer settlementDays,
+            const Calendar& calendar,
+            Frequency frequency,
+            BusinessDayConvention paymentConvention,
+            DateGeneration::Rule rule,
+            const DayCounter& dayCounter,
+            const Handle<YieldTermStructure>& discountCurve,
+            const std::vector<Handle<DefaultProbabilityTermStructure>>& baseTermStructures,
+            const std::vector<Real>& recoveryRates,
+            const std::vector<Real>& weights,
+            Natural upfrontSettlementDays = 3,
+            bool settlesAccrual = true,
+            bool paysAtDefaultTime = true,
+            const Date& startDate = Date(),
+            const DayCounter& lastPeriodDayCounter = DayCounter(),
+            bool rebatesAccrual = true,
+            CreditDefaultSwap::PricingModel model = CreditDefaultSwap::Midpoint);
+    UpfrontCdsIndexHelper(
+            Rate fairUpfront,
+            Rate runningSpread,
+            const Period& tenor,
+            Integer settlementDays,
+            const Calendar& calendar,
+            Frequency frequency,
+            BusinessDayConvention paymentConvention,
+            DateGeneration::Rule rule,
+            const DayCounter& dayCounter,
+            const Handle<YieldTermStructure>& discountCurve,
+            const std::vector<Handle<DefaultProbabilityTermStructure>>& baseTermStructures,
+            const std::vector<Real>& recoveryRates,
+            const std::vector<Real>& weights,
+            Natural upfrontSettlementDays = 3,
+            bool settlesAccrual = true,
+            bool paysAtDefaultTime = true,
+            const Date& startDate = Date(),
+            const DayCounter& lastPeriodDayCounter = DayCounter(),
+            bool rebatesAccrual = true,
+            CreditDefaultSwap::PricingModel model = CreditDefaultSwap::Midpoint);
+    #endif
+    ext::shared_ptr<CreditDefaultSwap> swap() const;
+    Real impliedQuote() const;
+
+    Real couponLegNPV() const;
+    Real defaultLegNPV() const;
+    Real accrualRebateNPV() const;
+    Real riskyAnnuity() const;
+    std::vector<RelinkableHandle<DefaultProbabilityTermStructure> > adjustedTermStructures() const;
+    std::vector<ext::shared_ptr<CreditDefaultSwap> > swaps() const;
+};
 
 
 // bootstrap traits
